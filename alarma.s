@@ -3,44 +3,82 @@
 .global main
 .func main
 main:
- /* @utilizar libreria lib_gpio
+  @utilizar libreria lib_gpio
   mov r0, #3
   bl GetGpioAddress
   
   @configurar pines como salida
+  @digito 1
   mov r0, #14
   mov r1, #1
   bl SetGpioFunction
   mov r0, #15
   mov r1, #1
   bl SetGpioFunction
+  mov r0, #17
+  mov r1, #1
+  bl SetGpioFunction
   mov r0, #18
+  mov r1, #1
+  bl SetGpioFunction
+  @digito 2
+  mov r0, #22
   mov r1, #1
   bl SetGpioFunction
   mov r0, #23
   mov r1, #1
   bl SetGpioFunction
-
-  @prueba para escribir numero a pines
-  mov r0, #60
-  bl ObtenerDigitos
-  mov r4, r0
-  mov r5, r1
-  
-  @escribir digitos a pines
-  mov r0, r4
-  bl EscribirDigito1
-  mov r0, r5
-  bl EscribirDigito2 */
-  
+  mov r0, #24
+  mov r1, #1
+  bl SetGpioFunction
+  mov r0, #25
+  mov r1, #1
+  bl SetGpioFunction
+  @todos los pines en bajo
+  mov r0, #14
+  mov r1, #0
+  bl SetGpio
+  mov r0, #15
+  mov r1, #0
+  bl SetGpio
+  mov r0, #17
+  mov r1, #0
+  bl SetGpio
+  mov r0, #18
+  mov r1, #0
+  bl SetGpio
+  mov r0, #22
+  mov r1, #0
+  bl SetGpio
+  mov r0, #23
+  mov r1, #0
+  bl SetGpio
+  mov r0, #24
+  mov r1, #0
+  bl SetGpio
+  mov r0, #25
+  mov r1, #0
+  bl SetGpio
+ 
   @prueba delay 1 segundo
-  mov r4, #0
+  mov r4, #0              @contador de alarma
   loop:
-    bl wait1s
-    add r4, r4, #1
-    mov r1, r4
+    bl wait1s             @espera de 1 segundo
+    add r4, r4, #1        @incrementar contador de alarma
+    cmp r4, #100
+    moveq r4, #0
+    mov r0, r4
+    bl ObtenerDigitos     @r0 = digito 1; r1 = digito 2
+    mov r5, r0
+    mov r6, r1
     ldr r0, =num
+    mov r1, r5
+    mov r2, r6
     bl printf
+    mov r0, r5
+    bl EscribirDigito1
+    mov r0, r6 
+    bl EscribirDigito2
   bal loop
   
 exit:
@@ -84,8 +122,11 @@ addr_floatZero: .word floatZero
   
 .data
   cps: .word 0
-  num: .asciz "%d\n"
+  num: .asciz "%d %d \n"
   msgCPS: .asciz "CPS: %d\n"
   time: .asciz "Time: %15.10f\n"
   floatOne: .float 1.000000
   floatZero: .float 0.000000
+  alarma0: .word 0
+  alarma1: .word 0
+  alarma2: .word 0

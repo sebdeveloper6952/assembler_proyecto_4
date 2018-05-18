@@ -36,7 +36,7 @@ ObtenerDigitos:
 @*********************** OUTPUT *************************
 @ Escribe los bits adecuados a los pines correspondientes
 @ del decodificador. Los pines utilizados son, del menos
-@ significativo al mas significativo: 14, 15, 18, 23
+@ significativo al mas significativo: 14, 15, 17, 18
 .global EscribirDigito1
 EscribirDigito1:
   push {r4,r5,lr}
@@ -47,7 +47,7 @@ EscribirDigito1:
   mov r5, #1
   and r3, r4, r5
   cmp r3, r5
-  mov r0, #14
+  mov r0, #18
   moveq r1, #1
   movne r1, #0
   bl SetGpio
@@ -56,7 +56,7 @@ EscribirDigito1:
   lsl r5, #1
   and r3, r4, r5
   cmp r3, r5
-  mov r0, #15
+  mov r0, #17
   moveq r1, #1
   movne r1, #0
   bl SetGpio
@@ -65,7 +65,7 @@ EscribirDigito1:
   lsl r5, #1
   and r3, r4, r5
   cmp r3, r5
-  mov r0, #18
+  mov r0, #15
   moveq r1, #1
   movne r1, #0
   bl SetGpio
@@ -74,7 +74,7 @@ EscribirDigito1:
   lsl r5, #1
   and r3, r4, r5
   cmp r3, r5
-  mov r0, #23
+  mov r0, #14
   moveq r1, #1
   movne r1, #0
   bl SetGpio
@@ -90,7 +90,7 @@ EscribirDigito1:
 @*********************** OUTPUT *************************
 @ Escribe los bits adecuados a los pines correspondientes
 @ del decodificador. Los pines utilizados son, del menos
-@ significativo al mas significativo: 24, 25, 8, 7
+@ significativo al mas significativo: 25, 24, 23, 22
 .global EscribirDigito2
 EscribirDigito2:
   push {r4,r5,lr}
@@ -101,7 +101,7 @@ EscribirDigito2:
   mov r5, #1
   and r3, r4, r5
   cmp r3, r5
-  mov r0, #24
+  mov r0, #25
   moveq r1, #1
   movne r1, #0
   bl SetGpio
@@ -110,7 +110,7 @@ EscribirDigito2:
   lsl r5, #1
   and r3, r4, r5
   cmp r3, r5
-  mov r0, #25
+  mov r0, #24
   moveq r1, #1
   movne r1, #0
   bl SetGpio
@@ -119,7 +119,7 @@ EscribirDigito2:
   lsl r5, #1
   and r3, r4, r5
   cmp r3, r5
-  mov r0, #8
+  mov r0, #23
   moveq r1, #1
   movne r1, #0
   bl SetGpio
@@ -128,7 +128,7 @@ EscribirDigito2:
   lsl r5, #1
   and r3, r4, r5
   cmp r3, r5
-  mov r0, #7
+  mov r0, #22
   moveq r1, #1
   movne r1, #0
   bl SetGpio
