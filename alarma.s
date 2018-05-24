@@ -34,6 +34,20 @@ main:
   mov r0, #25
   mov r1, #1
   bl SetGpioFunction
+  @botones
+  mov r0, #16
+  mov r1, #0
+  bl SetGpioFunction
+  mov r0, #20
+  mov r1, #0
+  bl SetGpioFunction
+  mov r0, #21
+  mov r1, #0
+  bl SetGpioFunction
+  @buzzer
+  mov r0, #26
+  mov r1, #1
+  bl SetGpioFunction
   @todos los pines en bajo
   mov r0, #14
   mov r1, #0
@@ -58,6 +72,9 @@ main:
   bl SetGpio
   mov r0, #25
   mov r1, #0
+  bl SetGpio
+  mov r0, #26
+  mov r0, #0
   bl SetGpio
   
   @configurar alarmas
@@ -86,11 +103,35 @@ programar_por_software:
   bl scanf
   b iniciar_alarma
 
-  @programar por botones
-  programar_por_botones:
+@programar por botones
+programar_por_botones:
+mov r4, #1
+ loop_botones:
+  @sumarle a la alarma
+  mov r0, #21
+  bl GetGpio
+  cmp r0, #1
+  bne cambio_digito
+  ldr r1,=alarma0
+  ldr r0,[r1]
+  add r0, #1
+  str r0, [r1]
+  bl ObtenerDigitos
+  mov r4, r1
+  bl EscribirDigito1
+  mov r0, r4
+  bl EscribirDigito2
+  bl button_wait
+  
+  @iniciar alarma
+  mov r0, #16
+  bl GetGpio
+  cmp r0, #1
+  beq iniciar_alarma
+bal loop_botones
   
   
-  @prueba delay 1 segundo
+@prueba delay 1 segundo
 iniciar_alarma:
   mov r4, #0                  @contador de alarma
   ldr r7, addr_alarma0        @cargar alarma configurada por usuario
@@ -109,9 +150,9 @@ iniciar_alarma:
     mov r2, r6
     bl printf
     mov r0, r5
-    bl EscribirDigito1
+    bl EscribirDigito1    @escribir digito 1 a display 1
     mov r0, r6 
-    bl EscribirDigito2
+    bl EscribirDigito2    @escribir digito 2 a display 2
     cmp r7, r4
     beq sonar_alarma
   bal loop
@@ -119,6 +160,20 @@ iniciar_alarma:
 sonar_alarma:
   ldr r0, =msgSonarAlarma
   bl printf
+  mov r4, #0x5                 @sonar buzzer 5 veces
+  alarma_loop:
+    mov r0, #26
+    mov r1, #1
+    bl SetGpio
+    mov r0, #0xF000000
+    bl gen_delay
+    mov r0, #26
+    mov r1, #0
+    bl SetGpio
+    mov r0, #0xF000000
+    bl gen_delay
+    subs r4, #1
+    bne alarma_loop
   
 exit:
   mov r7, #1
@@ -159,6 +214,18 @@ delay:
     bne delay_loop
   mov pc, lr
 
+button_wait:
+  mov r0, #0xF000000
+  button_wait_loop:
+    subs r0, #1
+    bne button_wait_loop
+  mov pc, lr
+
+gen_delay:
+  subs r0, #1
+  bne gen_delay
+  mov pc, lr
+
 addr_floatOne: .word floatOne
 addr_floatZero: .word floatZero
 addr_fmtInt: .word fmtInt
@@ -178,3 +245,5 @@ addr_alarma0: .word alarma0
   floatOne: .float 1.000000
   floatZero: .float 0.000000
   alarma0: .word 0
+  decenas: .word 0
+  unidades: .word 0
