@@ -77,12 +77,15 @@ main:
   mov r0, #0
   bl SetGpio
   
-  @configurar alarmas
+@configurar alarmas
+menu:
   ldr r0, =msgMenu
   bl printf
   ldr r0, =msgSoftware
   bl printf
   ldr r0, =msgBotones
+  bl printf
+  ldr r0, =msgSalir
   bl printf
   ldr r0, =msgIngreseOpcion
   bl printf
@@ -91,8 +94,11 @@ main:
   bl scanf
   ldr r0, =opcionIngresada
   ldr r0, [r0]
+  cmp r0, #1
+  beq programar_por_software
   cmp r0, #2
   beq programar_por_botones
+  bal exit                     @ tercer opcion, salir del programa
   
 @programar por software
 programar_por_software:
@@ -111,10 +117,12 @@ mov r4, #1
   mov r0, #21
   bl GetGpio
   cmp r0, #1
-  bne cambio_digito
+  bne boton_iniciar_alarma
   ldr r1,=alarma0
   ldr r0,[r1]
   add r0, #1
+  cmp r0, #60
+  moveq r0, #0
   str r0, [r1]
   bl ObtenerDigitos
   mov r4, r1
@@ -124,6 +132,7 @@ mov r4, #1
   bl button_wait
   
   @iniciar alarma
+  boton_iniciar_alarma:
   mov r0, #16
   bl GetGpio
   cmp r0, #1
@@ -174,6 +183,7 @@ sonar_alarma:
     bl gen_delay
     subs r4, #1
     bne alarma_loop
+  bal menu                     @regresar a menu principal
   
 exit:
   mov r7, #1
@@ -239,6 +249,7 @@ addr_alarma0: .word alarma0
   msgMenu: .asciz "***************** Menu ****************** \n"
   msgSoftware: .asciz "1. Programar alarmas por medio del programa. \n"
   msgBotones: .asciz "2. Programar alarmas por medio de botones. \n"
+  msgSalir: .asciz "3. Salir del Programa.\n"
   msgIngreseOpcion: .asciz "Ingrese opcion: \n"
   msgIngreseAlarma: .asciz "Ingrese a que segundo suena la alarma (0 - 60): \n"
   msgSonarAlarma: .asciz "DESPIEEEEEEERTEEEEEEESEEEEEEE!\n"
